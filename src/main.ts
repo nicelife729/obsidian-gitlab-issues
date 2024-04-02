@@ -4,9 +4,11 @@ import log from "./logger";
 import Filesystem from "./filesystem";
 import GitlabLoader from "./gitlab-loader";
 import gitlabIcon from './assets/gitlab-icon.svg';
+import {Gitlab} from "@gitbeaker/rest";
 
 export default class GitlabIssuesPlugin extends Plugin {
 	settings: GitlabIssuesSettings;
+	api: Gitlab;
 	startupTimeout: number|null = null;
 	automaticRefresh: number|null = null;
 	iconAdded = false;
@@ -18,6 +20,17 @@ export default class GitlabIssuesPlugin extends Plugin {
 		this.addSettingTab(new GitlabIssuesSettingTab(this.app, this));
 
 		if (this.settings.gitlabToken) {
+			this.api = new Gitlab({
+				host: this.settings.gitlabUrl,
+				token: this.settings.gitlabToken,
+				// rateLimits: {
+				// 	'**': 3000,
+				// 	'projects/*/issues/*/notes': {
+				// 	  method: 'post',
+				// 	  limit: 300,
+				// 	},
+				// },
+			});
 			this.createOutputFolder();
 			this.addIconToLeftRibbon();
 			this.addCommandToPalette();
@@ -75,9 +88,9 @@ export default class GitlabIssuesPlugin extends Plugin {
 		fs.createOutputDirectory();
 	}
 
-	private fetchFromGitlab () {
+	private async fetchFromGitlab () {
 		new Notice('Updating issues from Gitlab');
-		const loader = new GitlabLoader(this.app, this.settings);
+		const loader = new GitlabLoader(this.app, this.settings, this.api);
 		loader.loadIssues();
 	}
 

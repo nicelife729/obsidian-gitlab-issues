@@ -17,7 +17,7 @@ export interface GitlabIssuesSettings {
 }
 
 export const DEFAULT_SETTINGS: GitlabIssuesSettings = {
-	gitlabUrl: 'https://gitlab.com',
+	gitlabUrl: 'https://jihulab.com',
 	gitlabToken: '',
 	gitlabIssuesLevel: 'personal',
 	gitlabAppId: '',

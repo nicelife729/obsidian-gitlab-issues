@@ -4,6 +4,7 @@ import { GitlabIssuesSettings } from "./settings";
 import log from "./logger";
 import { compile } from 'handlebars';
 import defaultTemplate from './default-template';
+import { sanitizeFileName } from './util';
 
 export default class Filesystem {
 
@@ -39,21 +40,48 @@ export default class Filesystem {
 		}
 	}
 
-	public processIssues(issues: Array<Issue>)
+	// public processIssues(issues: Array<Issue>)
+	// {
+	// 	this.vault.adapter.read(this.settings.templateFile)
+	// 		.then((rawTemplate: string) => {
+	// 			issues.map(
+	// 				(issue: Issue) => this.writeFile(issue, compile(rawTemplate))
+	// 			);
+	// 		})
+	// 		.catch((error) => {
+	// 			issues.map(
+	// 				(issue: Issue) => this.writeFile(issue, compile(defaultTemplate.toString()))
+	// 			);
+	// 		})
+	// 	;
+	// }
+
+
+	public processIssue(issue: Object)
 	{
 		this.vault.adapter.read(this.settings.templateFile)
 			.then((rawTemplate: string) => {
-				issues.map(
-					(issue: Issue) => this.writeFile(issue, compile(rawTemplate))
-				);
+				this.writeRawFile(issue, compile(rawTemplate))
 			})
 			.catch((error) => {
-				issues.map(
-					(issue: Issue) => this.writeFile(issue, compile(defaultTemplate.toString()))
-				);
+				this.writeRawFile(issue, compile(defaultTemplate.toString()))
 			})
 		;
 	}
+
+	private writeRawFile(issue: Object, template: HandlebarsTemplateDelegate)
+	{
+		this.vault.create(this.buildRawFileName(issue), template(issue))
+			.catch((error) => log(error.message))
+		;
+	}
+
+	private buildRawFileName(obj: Object): string
+	{
+		const issue =  obj as {title: string}
+		return this.settings.outputDir + '/' + sanitizeFileName(issue.title) + '.md';
+	}
+
 
 	private writeFile(issue: Issue, template: HandlebarsTemplateDelegate)
 	{
