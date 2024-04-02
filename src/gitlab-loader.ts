@@ -21,33 +21,7 @@ export default class GitlabLoader {
 		this.api = api;
 	}
 
-	// getUrl() {
-	// 	switch (this.settings.gitlabIssuesLevel) {
-	// 		case "project":
-	// 			return `${this.settings.gitlabApiUrl()}/projects/${this.settings.gitlabAppId}/issues?${this.settings.filter}`;
-	// 		case "group":
-	// 			return `${this.settings.gitlabApiUrl()}/groups/${this.settings.gitlabAppId}/issues?${this.settings.filter}`;
-	// 		case "personal":
-	// 		default:
-	// 			return `${this.settings.gitlabApiUrl()}/issues?${this.settings.filter}`;
-	// 	}
-	// }
-
-	// loadIssues() {
-	// 	GitlabApi.load<Array<Issue>>(encodeURI(this.getUrl()), this.settings.gitlabToken)
-	// 		.then((issues: Array<Issue>) => {
-	// 			const gitlabIssues = issues.map((rawIssue: Issue) => new GitlabIssue(rawIssue));
-
-	// 			if(this.settings.purgeIssues) {
-	// 				this.fs.purgeExistingIssues();
-	// 			}
-
-	// 			this.fs.processIssues(gitlabIssues);
-	// 		})
-	// 		.catch(error => {
-	// 			console.error(error.message);
-	// 		});
-	// }
+	
 
 	translateIssues(issues: Array<Object>) {
 		issues.map(async (rawIssue: Object) => {
@@ -66,7 +40,7 @@ export default class GitlabLoader {
 
 			// 将markdown中的路径替换为完整的url
 			const prefix = issue.web_url.split("/-/issues/")[0];
-			console.log(issue.project_id, issue.iid, prefix);
+			// console.log(issue.project_id, issue.iid, prefix);
 			(rawIssue as any).description = adjustImageMarkdown(issue.description, prefix);
 			(rawIssue as any).description = adjustMarkdownLink(issue.description, prefix);
 		
@@ -109,14 +83,23 @@ export default class GitlabLoader {
 	}
 
 	async loadProjectIssues() {
-		return this.api.Issues.all({projectId: this.settings.gitlabAppId, maxPages:1, perPage: 20})
+		let params = {projectId: this.settings.gitlabAppId, perPage: 100};
+		let filterParams = JSON.parse(this.settings.filter)
+		console.log({...params, ...filterParams})
+		return this.api.Issues.all({...params, ...filterParams})
 	}
 
 	async loadGroupIssues() {
-		return this.api.Issues.all({groupId: this.settings.gitlabAppId, maxPages:1, perPage: 100})
+		let params = {groupId: this.settings.gitlabAppId, perPage: 100};
+		let filterParams = JSON.parse(this.settings.filter)
+		console.log({...params, ...filterParams})
+		return this.api.Issues.all({...params, ...filterParams})
 	}
 
 	async loadPersonalIssues() {
-		return this.api.Issues.all({ maxPages:1, perPage: 100})
+		let params = {perPage: 100};
+		let filterParams = JSON.parse(this.settings.filter)
+		console.log({...params, ...filterParams})
+		return this.api.Issues.all({...params, ...filterParams})
 	}
 }
