@@ -23,3 +23,17 @@ export function adjustMarkdownLink(content: string, prefix: string): string {
 	const result = content.replace(regex, `[$1](${prefix}$2)`);
 	return result
 }
+
+// 使用正则表达式替换除了_和-之外的所有符号为_
+export function adjustLabels(content: string): string {
+	if (content === null) {
+		return content;
+	}
+	
+	return content.replace(/[^a-zA-Z0-9_\u4e00-\u9fff-]/g, "_")
+}
+
+export function delay(ms: number): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+  

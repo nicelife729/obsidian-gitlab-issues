@@ -1,22 +1,32 @@
 
 export default `---
 id: {{id}}
-title: {{{title}}}
-dueDate: {{due_date}}
-webUrl: {{web_url}}
-project: {{references.full}}
-labels:
+iid: {{iid}}
+state: {{state}}
+createdAt: {{created_at}}
+updatedAt: {{updated_at}}
+author: {{author.name}}
+tags:
     {{#each labels}}
     - {{this}}
     {{/each}}
+   
+webUrl: {{web_url}}
+project: {{references.full}}
+projectId: {{project_id}}
+timeStats: {{time_stats.human_total_time_spent}}
+notesIsBroken: {{notesIsBroken}}
 ---
-
 ### {{{title}}}
-##### Due on {{due_date}}
+
+[View On Gitlab]({{web_url}})
+
+#### 正文
 
 {{{description}}}
 
-### 评论
+
+#### 评论
 
 {{#each notes}}
 姓名：{{this.author.name}}
@@ -26,11 +36,7 @@ labels:
 {{this.body}}
 
 
-
 {{/each}}
-
-
-[View On Gitlab]({{web_url}})
 `;
 
 

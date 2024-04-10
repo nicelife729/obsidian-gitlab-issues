@@ -1,0 +1,26 @@
+{
+    "gitlabList": [
+        {
+            "gitlabUrl": "https://gitlab.com",
+            "gitlabToken": "",
+            "gitlabIssuesLevel": "personal",
+            "gitlabAppId": "",
+            "outputDir": "",
+            "filter": {
+                "maxPages": 1
+            },
+            "purgeIssues": true
+        },
+        {
+            "gitlabUrl": "https://gitlab.com",
+            "gitlabToken": "",
+            "gitlabIssuesLevel": "personal",
+            "gitlabAppId": "",
+            "outputDir": "",
+            "filter": {
+                "maxPages": 1
+            },
+            "purgeIssues": true
+        }
+    ]
+}
